@@ -6,7 +6,7 @@ import Modal from "../components/Modal";
 
 export default function StaffManagement() {
 
-    /*const sampleStaffData = [
+    const sampleStaffData = [
         {
             id: "E001",
             firstName: "John",
@@ -40,7 +40,7 @@ export default function StaffManagement() {
             joinedDate: "2019-11-02",
             email: "alice.johnson@example.com",
         },
-    ];*/
+    ];
 
 
 
@@ -58,7 +58,7 @@ export default function StaffManagement() {
 
     // *if you need to check using sample data
 
-    const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState(sampleStaffData);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 

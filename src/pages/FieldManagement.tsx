@@ -3,6 +3,9 @@ import Modal from "../components/Modal";
 import TextField from "../components/TextField";
 import SelectField from "../components/SelectField";
 import InputTextWithImageUpload from "../components/InputTextWithImageUpload";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../store/store.tsx";
+import {addField, deleteField} from "../redux/FieldSlice.ts";
 
 interface Field {
     fieldCode: string;
@@ -15,7 +18,7 @@ interface Field {
 }
 
 export default function FieldManagement() {
-    const sampleFields = [
+    /*const sampleFields = [
         {
             fieldCode: "F001",
             fieldName: "Field A",
@@ -43,8 +46,10 @@ export default function FieldManagement() {
             staff: "Alice Johnson",
             image: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
         },
-    ];
-    const [fields, setFields] = useState<Field[]>(sampleFields); // No sample data
+    ];*/
+  //  const [fields, setFields] = useState<Field[]>(sampleFields); // No sample data
+    const dispatch = useDispatch();
+    const fields = useSelector((state: RootState) => state.field); // Replace with your actual field state=
 
     const [newField, setNewField] = useState<Field>({
         fieldCode: "",
@@ -81,7 +86,7 @@ export default function FieldManagement() {
     const handleAddField = (e: React.FormEvent) => {
         e.preventDefault();
         if (newField.fieldCode && newField.fieldName) {
-            setFields([...fields, newField]);
+            dispatch(addField(newField));
             setNewField({
                 fieldCode: "",
                 fieldName: "",
@@ -100,7 +105,7 @@ export default function FieldManagement() {
     };
 
     const handleDeleteField = (fieldCode: string) => {
-        setFields(fields.filter((field) => field.fieldCode !== fieldCode));
+        dispatch(deleteField(fieldCode));
     };
 
     const handleCloseModal = () => {
