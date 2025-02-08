@@ -5,96 +5,97 @@ import SelectField from "../components/SelectField";
 import InputTextWithImageUpload from "../components/InputTextWithImageUpload";
 import Table from "../components/Table";
 import Modal from "../components/Modal";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../store/store.tsx";
+import {addLog, deleteLog} from "../redux/LogSlice.ts";
+
+interface Log {
+    logCode: string;
+    logDate: string;
+    field: string;
+    crop: string;
+    staff: string;
+    logDetails: string;
+    observedImage: string;
+}
 
 export default function LogManagement() {
 
-    const sampleLogData = [
-        {
-            logCode: "L001",
-            logDate: "2025-01-10",
-            field: "Field A",
-            crop: "Corn",
-            staff: "John Doe",
-            logDetails: "Inspected for pests; minor infestation noted.",
-            observedImage: "https://via.placeholder.com/150", // Placeholder URL
-        },
-        {
-            logCode: "L002",
-            logDate: "2025-01-11",
-            field: "Field B",
-            crop: "Wheat",
-            staff: "Jane Smith",
-            logDetails: "Fertilizer applied; growth progressing well.",
-            observedImage: "https://via.placeholder.com/150",
-        },
-        {
-            logCode: "L003",
-            logDate: "2025-01-12",
-            field: "Field C",
-            crop: "Rice",
-            staff: "Alice Johnson",
-            logDetails: "Water level monitored; no issues found.",
-            observedImage: "https://via.placeholder.com/150",
-        },
-        {
-            logCode: "L004",
-            logDate: "2025-01-13",
-            field: "Field D",
-            crop: "Soybeans",
-            staff: "Bob Brown",
-            logDetails: "Harvest initiated; quality check in progress.",
-            observedImage: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
-        },
-        {
-            logCode: "L005",
-            logDate: "2025-01-14",
-            field: "Field E",
-            crop: "Tomatoes",
-            staff: "Emily White",
-            logDetails: "Checked for fungal infections; none detected.",
-            observedImage: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
-        },
-    ];
+    const dispatch = useDispatch();
+    const logs = useSelector((state: RootState) => state.log);
+
+    const [newLog, setNewLog] = useState<Log>({
+        logCode: "",
+        logDate: "",
+        field: "",
+        crop: "",
+        staff: "",
+        logDetails: "",
+        observedImage: "",
+    });
 
 
-    // State for log form fields
-    const [logCode, setLogCode] = useState("");
-    const [logDate, setLogDate] = useState("");
-    const [field, setField] = useState("");
-    const [crop, setCrop] = useState("");
-    const [staff, setStaff] = useState("");
-    const [logDetails, setLogDetails] = useState("");
-    const [observedImage, setObservedImage] = useState("");
-
-    const [logs, setLogs] = useState(sampleLogData); // Initialize with empty array
-    const [selectedLog, setSelectedLog] = useState(null);
+    // const [logs, setLogs] = useState(sampleLogData); // Initialize with empty array
+    const [selectedLog, setSelectedLog] = useState<Log | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSave = (event: React.FormEvent) => {
+    const handleAddLog = (event: React.FormEvent) => {
         event.preventDefault();
-        const newLog = {
-            logCode,
-            logDate,
-            field,
-            crop,
-            staff,
-            logDetails,
-            observedImage,
-        };
-        setLogs((prev) => [...prev, newLog]);
-        clearForm();
+        dispatch(addLog(newLog));
+        setNewLog({
+            logCode: "",
+            logDate: "",
+            field: "",
+            crop: "",
+            staff: "",
+            logDetails: "",
+            observedImage: "",
+        });
+        // clearForm();
     };
 
-    const handleDelete = (row: Record<string, any>) => {
-        setLogs((prev) => prev.filter((log) => log.logCode !== row.logCode));
+
+
+    const handleDelete = (logCode: string) => {
+        dispatch(deleteLog(logCode));
     };
 
-    const handleSeeMore = (row: Record<string, any>) => {
-        setSelectedLog(row);
+    const handleSeeMore = (log: Log) => {
+        setSelectedLog(log);
         setIsModalOpen(true);
     };
 
-    const clearForm = () => {
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedLog(null);
+    };
+
+    const handkeInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = event.target;
+        setNewLog({ ...newLog, [id]: value });
+    };
+
+    const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+        setNewLog({ ...newLog, field: value });
+    };
+
+    const handleCropChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+        setNewLog({ ...newLog, crop: value });
+    };
+
+    const handleStaffChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+        setNewLog({ ...newLog, staff: value });
+    };
+
+    const handleImageUrlChange = (imgUrl: string) => {
+        setNewLog({ ...newLog, observedImage: imgUrl });
+    };
+
+
+    /*const clearForm = () => {
         setLogCode("");
         setLogDate("");
         setField("");
@@ -102,7 +103,7 @@ export default function LogManagement() {
         setStaff("");
         setLogDetails("");
         setObservedImage("");
-    };
+    };*/
 
     const columns = [
         { header: "Log Code", accessor: "logCode" },
@@ -128,58 +129,58 @@ export default function LogManagement() {
     return (
         <div className="max-w-5xl mx-auto p-6 bg-white rounded-md shadow-md">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Log Management</h2>
-            <form onSubmit={handleSave}>
+            <form onSubmit={handleAddLog}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <TextField
                         id="logCode"
                         label="Log Code"
-                        value={logCode}
+                        value={newLog.logCode}
                         placeholder="Enter log code"
-                        onChange={(e) => setLogCode(e.target.value)}
+                        onChange={handkeInputChange}
                         required
                     />
                     <DateField
                         id="logDate"
                         label="Log Date"
-                        value={logDate}
-                        onChange={(e) => setLogDate(e.target.value)}
+                        value={newLog.logDate}
+                        onChange={handkeInputChange}
                         required
                     />
                     <SelectField
                         id="field"
                         label="Field"
-                        value={field}
+                        value={newLog.field}
                         options={["Field A", "Field B", "Field C"]} // Replace with dynamic options
-                        onChange={(e) => setField(e.target.value)}
+                        onChange={handleFieldChange}
                         required
                     />
                     <SelectField
                         id="crop"
                         label="Crop"
-                        value={crop}
+                        value={newLog.crop}
                         options={["Crop X", "Crop Y", "Crop Z"]} // Replace with dynamic options
-                        onChange={(e) => setCrop(e.target.value)}
+                        onChange={handleCropChange}
                         required
                     />
                     <SelectField
                         id="staff"
                         label="Staff"
-                        value={staff}
+                        value={newLog.staff}
                         options={["Staff 1", "Staff 2", "Staff 3"]} // Replace with dynamic options
-                        onChange={(e) => setStaff(e.target.value)}
+                        onChange={handleStaffChange}
                         required
                     />
                     <TextField
                         id="logDetails"
                         label="Log Details"
-                        value={logDetails}
+                        value={newLog.logDetails}
                         placeholder="Enter log details"
-                        onChange={(e) => setLogDetails(e.target.value)}
+                        onChange={handkeInputChange}
                         required
                     />
                     <InputTextWithImageUpload
                         label="Observed Image"
-                        onImageChange={(url) => setObservedImage(url)}
+                        onImageChange={handleImageUrlChange}
                     />
                 </div>
                 <div className="flex justify-between mt-6">
@@ -191,7 +192,7 @@ export default function LogManagement() {
                     </button>
                     <button
                         type="button"
-                        onClick={clearForm}
+                        /*onClick={clearForm}*/
                         className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
                     >
                         Clear
@@ -226,6 +227,12 @@ export default function LogManagement() {
                                 />
                             </div>
                         )}
+                        <button
+                            onClick={handleCloseModal}
+                            className="bg-red-600 text-white px-4 py-2 rounded-md"
+                        >
+                            Close
+                        </button>
                     </div>
                 </Modal>
             )}

@@ -87,6 +87,11 @@ export default function StaffManagement() {
         setNewEmployee({ ...newEmployee, gender: value });
     };
 
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedStaff(null);
+    };
+
     /*const clearForm = () => {
         setEmployeeId("");
         setFirstName("");
@@ -228,6 +233,12 @@ export default function StaffManagement() {
                         <p><strong>Gender:</strong> {selectedEmployee.gender}</p>
                         <p><strong>Joined Date:</strong> {selectedEmployee.joinedDate}</p>
                         <p><strong>Email:</strong> {selectedEmployee.email}</p>
+                        <button
+                            onClick={handleCloseModal}
+                            className="bg-red-600 text-white px-4 py-2 rounded-md"
+                        >
+                            Close
+                        </button>
                     </div>
                 </Modal>
             )}

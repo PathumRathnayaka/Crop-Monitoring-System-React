@@ -241,7 +241,7 @@ export default function FieldManagement() {
                             <img
                                 src={selectedField.image}
                                 alt={selectedField.fieldName}
-                                className="w-32 h-32 object-cover rounded-md mt-2"
+                                className="w-full h-auto rounded-md"
                             />
                         </div>
                         <button

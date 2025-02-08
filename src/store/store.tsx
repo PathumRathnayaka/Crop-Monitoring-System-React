@@ -4,6 +4,7 @@ import CropSlice from "../redux/CropSlice";
 import StaffSlice from "../redux/StaffSlice";
 import VehicleSlice from "../redux/VehicleSlice";
 import EquipmentSlice from "../redux/EquipmentSlice";
+import LogSlice from "../redux/LogSlice.ts";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         staff:StaffSlice,
         vehicle:VehicleSlice,
         equipment:EquipmentSlice,
+        log:LogSlice
     },
 });
 
