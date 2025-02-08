@@ -4,7 +4,7 @@ import SelectField from "../components/SelectField";
 import Table from "../components/Table";
 import Modal from "../components/Modal";
 import {RootState} from "../store/store.tsx";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {addVehicle, deleteVehicle} from "../redux/VehicleSlice.ts";
 
 
@@ -20,7 +20,7 @@ interface Vehicle {
 export default function VehicleManagement() {
 
     const dispatch = useDispatch();
-    const vehicles =useSelector((state: RootState) => state.vehicle);
+    const vehicles =useState((state: RootState) => state.vehicle);
 
     const [newVehicle, setNewVehicle] = useState<Vehicle>({
         vehicleCode: "",
@@ -201,12 +201,6 @@ export default function VehicleManagement() {
                         <p><strong>Fuel Type:</strong> {selectedVehicle.fuelType}</p>
                         <p><strong>Status:</strong> {selectedVehicle.status}</p>
                         <p><strong>Allocated Staff:</strong> {selectedVehicle.allocatedStaff}</p>
-                        <button
-                            onClick={handleCloseModal}
-                            className="bg-red-600 text-white px-4 py-2 rounded-md"
-                        >
-                            Close
-                        </button>
                     </div>
                 </Modal>
             )}
