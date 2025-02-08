@@ -15,4 +15,8 @@ export const store = configureStore({
     },
 });
 
+store.subscribe(() => {
+    console.log("Updated Store State:", store.getState());
+});
+
 export type RootState = ReturnType<typeof store.getState>;

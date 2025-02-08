@@ -42,7 +42,7 @@ export default function StaffManagement() {
         email: "",
     });
 
-    const [selectedEmployee, setSelectedEmployee] = useState<Employee|null>(null);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleAddEmployee =(e: React.FormEvent) => {
@@ -181,16 +181,16 @@ export default function StaffManagement() {
                     <TextField
                         id="joinedDate"
                         label="Joined Date"
-                        value={newEmployee.joinedDate}
+                        value={joinedDate}
                         placeholder="Enter joined date"
-                        onChange={handleInputChange}
+                        onChange={(e) => setJoinedDate(e.target.value)}
                     />
                     <TextField
                         id="email"
                         label="Email"
-                        value={newEmployee.email}
+                        value={email}
                         placeholder="Enter email"
-                        onChange={handleInputChange}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
                 <div className="flex justify-between mt-6">
@@ -202,7 +202,7 @@ export default function StaffManagement() {
                     </button>
                     <button
                         type="button"
-                        /*onClick={/!*clearForm*!/}*/
+                        onClick={clearForm}
                         className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
                     >
                         Clear

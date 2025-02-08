@@ -7,13 +7,13 @@ const StaffSlice=createSlice({
     name: "staff",
     initialState,
     reducers:{
-        addStaff:(state,action:PayloadAction<StaffModel>)=>{
+        addEmployee:(state,action:PayloadAction<StaffModel>)=>{
             state.push(action.payload);
         },
-        deleteStaff: (state, action) => {
+        deleteEmployee: (state, action) => {
             return state.filter(staff => staff.id !== action.payload);
         },
-        updateStaff: (state, action) => {
+        updateEmployee: (state, action) => {
             const index = state.findIndex(staff => staff.id === action.payload.staffId);
             if (index !== -1) {
                 state[index] = action.payload;
@@ -22,5 +22,5 @@ const StaffSlice=createSlice({
     }
 })
 
-export const {addStaff,deleteStaff,updateStaff } = StaffSlice.actions;
+export const {addEmployee,deleteEmployee,updateEmployee } = StaffSlice.actions;
 export default StaffSlice.reducer

@@ -167,10 +167,16 @@ export default function CropManagement() {
                 >
                     Add Crop
                 </button>
+                <button
+                    type="submit"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                >
+                    Update Crop
+                </button>
             </form>
 
             {/* Table Section */}
-            <Table columns={columns} data={crops} actions={actions} />
+            <Table columns={columns} data={crops} actions={actions}/>
 
             {/* Modal */}
             {isModalOpen && selectedCrop && (
