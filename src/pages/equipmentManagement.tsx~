@@ -78,11 +78,6 @@ export default function EquipmentManagement() {
         setNewEquipment({ ...newEquipment, assignedStaff: value });
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setSelectedEquipment(null);
-    };
-
     const clearForm = () => {
         setNewEquipment({
             equipmentId: "",
@@ -196,7 +191,7 @@ export default function EquipmentManagement() {
                         <p><strong>Status:</strong> {selectedEquipment.status}</p>
                         <p><strong>Assigned Staff:</strong> {selectedEquipment.assignedStaff}</p>
                         <button
-                            onClick={handleCloseModal}
+                            onClick={setIsModalOpen(false)}
                             className="bg-red-600 text-white px-4 py-2 rounded-md"
                         >
                             Close
