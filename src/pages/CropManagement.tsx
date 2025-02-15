@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import { addCrop, deleteCrop } from "../redux/CropSlice";
+import {addCrop, deleteCrop, updateCrop} from "../redux/CropSlice";
 import Modal from "../components/Modal";
 import TextField from "../components/TextField";
 import SelectField from "../components/SelectField";
@@ -35,6 +35,7 @@ export default function CropManagement() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
+    const [editingCrop, setEditingCrop] = useState<Crop | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -66,6 +67,24 @@ export default function CropManagement() {
         }
     };
 
+    const handleUpdateCrop = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (editingCrop) {
+            dispatch(updateCrop(newCrop)); // Dispatch update action
+            setEditingCrop(null); // Reset editing state
+            setNewCrop({
+                cropCode: "",
+                commonName: "",
+                scientificName: "",
+                image: "",
+                category: "",
+                season: "",
+                field: "",
+            });
+        }
+    };
+
     const handleSeeMore = (crop: Crop) => {
         setSelectedCrop(crop);
         setIsModalOpen(true);
@@ -82,6 +101,7 @@ export default function CropManagement() {
 
     const handleRowClick = (crop: Crop) => {
         setNewCrop(crop);
+        setEditingCrop(crop); // Store the crop being edited
 
         console.log("Crop Code:", crop.cropCode);
         console.log("Common Name:", crop.commonName);
@@ -98,6 +118,8 @@ export default function CropManagement() {
         { header: "Category", accessor: "category" },
         { header: "Field", accessor: "field" },
     ];
+
+
 
     // Table Actions
     const actions = [
@@ -180,8 +202,10 @@ export default function CropManagement() {
                     Add Crop
                 </button>
                 <button
-                    type="submit"
+                    type="button"
+                    onClick={handleUpdateCrop}
                     className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                    disabled={!editingCrop} // Disable button if no crop is selected
                 >
                     Update Crop
                 </button>
@@ -189,7 +213,7 @@ export default function CropManagement() {
 
             {/* Table Section */}
 
-            <Table columns={columns} data={crops} actions={actions} onRowClick={handleRowClick} />
+            <Table columns={columns} data={crops} actions={actions} onRowClick={handleRowClick}/>
 
             {/* Modal */}
             {isModalOpen && selectedCrop && (
