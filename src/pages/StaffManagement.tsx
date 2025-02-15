@@ -5,7 +5,7 @@ import Table from "../components/Table";
 import Modal from "../components/Modal";
 import {RootState} from "../store/store.tsx";
 import {useDispatch, useSelector} from "react-redux";
-import {addEmployee, deleteEmployee} from "../redux/StaffSlice.ts";
+import {addEmployee, deleteEmployee, updateEmployee} from "../redux/StaffSlice.ts";
 
 interface Employee {
     employeeId: string;
@@ -44,6 +44,7 @@ export default function StaffManagement() {
 
     const [selectedEmployee, setSelectedEmployee] = useState<Employee|null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
     const handleAddEmployee =(e: React.FormEvent) => {
         e.preventDefault();
@@ -62,6 +63,26 @@ export default function StaffManagement() {
             });
         }
     }
+
+    const handleUpdateEmployee = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (editingEmployee) {
+            dispatch(updateEmployee(newEmployee));
+            setEditingEmployee(null);
+            setNewEmployee({
+                employeeId: "",
+                firstName: "",
+                lastName: "",
+                designation: "",
+                contact: "",
+                address: "",
+                gender: "",
+                joinedDate: "",
+                email: "",
+            })
+        }
+    };
 
     const handleDelete = (employeeId: string) => {
         dispatch(deleteEmployee(employeeId));
@@ -89,7 +110,13 @@ export default function StaffManagement() {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setSelectedStaff(null);
+        setSelectedEmployee(null);
+    };
+
+    const handleRowClick = (employee: Employee) => {
+        setNewEmployee(employee);
+        setEditingEmployee(employee); // Store the crop being edited
+
     };
 
     /*const clearForm = () => {
@@ -119,7 +146,7 @@ export default function StaffManagement() {
         },
         {
             label: "Delete",
-            onClick: handleDelete,
+            onClick: (employee: Employee) => handleDelete(employee.employeeId), // Ensure employeeId is passed correctly
             className: "bg-red-600 text-white hover:bg-red-700",
         },
     ];
@@ -198,24 +225,24 @@ export default function StaffManagement() {
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="flex justify-between mt-6">
+
                     <button
                         type="submit"
-                        className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
+                        className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md mr-4"
                     >
-                        Save
+                        Add Employee
                     </button>
                     <button
                         type="button"
-                        /*onClick={/!*clearForm*!/}*/
-                        className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
+                        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                        onClick={handleUpdateEmployee}
                     >
-                        Clear
+                        Update Employee
                     </button>
-                </div>
+
             </form>
             <div className="mt-8">
-                <Table columns={columns} data={employees} actions={actions} />
+                <Table columns={columns} data={employees} actions={actions} onRowClick={handleRowClick}/>
             </div>
             {selectedEmployee && (
                 <Modal

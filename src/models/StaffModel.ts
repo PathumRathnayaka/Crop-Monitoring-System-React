@@ -1,5 +1,5 @@
 export class StaffModel{
-    id : string;
+    employeeId  : string;
     firstName : string;
     lastName : string;
     designation : string;
@@ -10,7 +10,7 @@ export class StaffModel{
     email : string;
 
     constructor(id : string, firstName : string, lastName : string, designation : string, address : string, contact : string, gender : string, joinedDate : string, email : string) {
-        this.id = id;
+        this.employeeId  = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.designation = designation;
