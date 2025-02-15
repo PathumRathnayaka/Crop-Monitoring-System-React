@@ -8,6 +8,7 @@ import SelectField from "../components/SelectField";
 import InputTextWithImageUpload from "../components/InputTextWithImageUpload";
 import Table from "../components/Table";
 
+
 interface Crop {
     cropCode: string;
     commonName: string;
@@ -77,6 +78,17 @@ export default function CropManagement() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedCrop(null);
+    };
+
+    const handleRowClick = (crop: Crop) => {
+        setNewCrop(crop);
+
+        console.log("Crop Code:", crop.cropCode);
+        console.log("Common Name:", crop.commonName);
+        console.log("Image URL:", crop.image);
+        console.log("Category:", crop.category);
+        console.log("Season:", crop.season);
+        console.log("Field:", crop.field);
     };
 
     // Table Columns
@@ -176,7 +188,8 @@ export default function CropManagement() {
             </form>
 
             {/* Table Section */}
-            <Table columns={columns} data={crops} actions={actions}/>
+
+            <Table columns={columns} data={crops} actions={actions} onRowClick={handleRowClick} />
 
             {/* Modal */}
             {isModalOpen && selectedCrop && (
