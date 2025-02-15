@@ -3,10 +3,9 @@ import TextField from "../components/TextField";
 import SelectField from "../components/SelectField";
 import Table from "../components/Table";
 import Modal from "../components/Modal";
-import {RootState} from "../store/store.tsx";
-import {useDispatch, useSelector} from "react-redux";
-import {addVehicle, deleteVehicle} from "../redux/VehicleSlice.ts";
-
+import { RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { addVehicle, deleteVehicle, updateVehicle } from "../redux/VehicleSlice";
 
 interface Vehicle {
     vehicleCode: string;
@@ -18,9 +17,8 @@ interface Vehicle {
 }
 
 export default function VehicleManagement() {
-
     const dispatch = useDispatch();
-    const vehicles =useSelector((state: RootState) => state.vehicle);
+    const vehicles = useSelector((state: RootState) => state.vehicle);
 
     const [newVehicle, setNewVehicle] = useState<Vehicle>({
         vehicleCode: "",
@@ -33,7 +31,7 @@ export default function VehicleManagement() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-
+    const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
 
     const handleAddVehicle = (event: React.FormEvent) => {
         event.preventDefault();
@@ -46,26 +44,37 @@ export default function VehicleManagement() {
             status: "",
             allocatedStaff: "",
         });
+    };
 
+    const handleUpdateVehicle = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (editingVehicle) {
+            dispatch(updateVehicle(newVehicle));
+            setEditingVehicle(null);
+            setNewVehicle({
+                vehicleCode: "",
+                licensePlate: "",
+                vehicleCategory: "",
+                fuelType: "",
+                status: "",
+                allocatedStaff: "",
+            });
+        }
+    };
+
+    const handleRowClick = (vehicle: Vehicle) => {
+        setNewVehicle(vehicle);
+        setEditingVehicle(vehicle);
     };
 
     const handleDelete = (vehicleCode: string) => {
-        dispatch(deleteVehicle(vehicleCode))
+        dispatch(deleteVehicle(vehicleCode));
     };
 
     const handleSeeMore = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
         setIsModalOpen(true);
     };
-
-    /*const clearForm = () => {
-        setVehicleCode("");
-        setLicensePlate("");
-        setVehicleCategory("");
-        setFuelType("");
-        setStatus("");
-        setAllocatedStaff("");
-    };*/
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -102,12 +111,12 @@ export default function VehicleManagement() {
     const actions = [
         {
             label: "See More",
-            onClick: handleSeeMore,
+            onClick: (row: Vehicle) => handleSeeMore(row),
             className: "bg-blue-600 text-white hover:bg-blue-700",
         },
         {
             label: "Delete",
-            onClick: handleDelete,
+            onClick: (row: Vehicle) => handleDelete(row.vehicleCode),
             className: "bg-red-600 text-white hover:bg-red-700",
         },
     ];
@@ -157,41 +166,39 @@ export default function VehicleManagement() {
                         onChange={handleStatusChange}
                         required
                     />
-
                     <SelectField
                         id="allocatedStaff"
                         label="Allocated Staff"
                         value={newVehicle.allocatedStaff}
-                        options={["John Doe", "Jane Smith", "Alice Johnson"]} // Example of staff names, replace with dynamic list
+                        options={["John Doe", "Jane Smith", "Alice Johnson"]}
                         onChange={handleAllocatedStaffChange}
                         required
                     />
                 </div>
-                <div className="flex justify-between mt-6">
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
-                    >
-                        Save
-                    </button>
-                    <button
-                        type="button"
-                        /*onClick={clearForm}*/
-                        className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
-                    >
-                        Clear
-                    </button>
-                </div>
+
+                <button
+                    type="submit"
+                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md mr-4"
+                >
+                    Add Vehicle
+                </button>
+                <button
+                    type="button"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                    onClick={handleUpdateVehicle}
+                >
+                    Update Vehicle
+                </button>
             </form>
 
             <div className="mt-8">
-                <Table columns={columns} data={vehicles} actions={actions} />
+                <Table columns={columns} data={vehicles} actions={actions} onRowClick={handleRowClick} />
             </div>
 
             {selectedVehicle && (
                 <Modal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={handleCloseModal}
                     title="Vehicle Details"
                 >
                     <div className="space-y-4">

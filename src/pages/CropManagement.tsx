@@ -202,10 +202,9 @@ export default function CropManagement() {
                     Add Crop
                 </button>
                 <button
-                    type="button"
-                    onClick={handleUpdateCrop}
+                    type="submit"
                     className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
-                    disabled={!editingCrop} // Disable button if no crop is selected
+                    onClick={handleUpdateCrop}
                 >
                     Update Crop
                 </button>
@@ -213,7 +212,7 @@ export default function CropManagement() {
 
             {/* Table Section */}
 
-            <Table columns={columns} data={crops} actions={actions} onRowClick={handleRowClick}/>
+            <Table columns={columns} data={crops} actions={actions} onRowClick={handleRowClick} />
 
             {/* Modal */}
             {isModalOpen && selectedCrop && (

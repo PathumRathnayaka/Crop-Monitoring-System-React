@@ -3,9 +3,10 @@ import Modal from "../components/Modal";
 import TextField from "../components/TextField";
 import SelectField from "../components/SelectField";
 import InputTextWithImageUpload from "../components/InputTextWithImageUpload";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../store/store.tsx";
-import {addField, deleteField} from "../redux/FieldSlice.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { addField, deleteField, updateField } from "../redux/FieldSlice";
+import Table from "../components/Table"; // Import the Table component
 
 interface Field {
     fieldCode: string;
@@ -18,38 +19,8 @@ interface Field {
 }
 
 export default function FieldManagement() {
-    /*const sampleFields = [
-        {
-            fieldCode: "F001",
-            fieldName: "Field A",
-            fieldLocation: "Location A",
-            size: "10 acres",
-            crops: "Wheat",
-            staff: "John Doe",
-            image: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
-        },
-        {
-            fieldCode: "F002",
-            fieldName: "Field B",
-            fieldLocation: "Location B",
-            size: "15 acres",
-            crops: "Rice",
-            staff: "Jane Smith",
-            image: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
-        },
-        {
-            fieldCode: "F003",
-            fieldName: "Field C",
-            fieldLocation: "Location C",
-            size: "20 acres",
-            crops: "Corn",
-            staff: "Alice Johnson",
-            image: "https://www.canr.msu.edu/uploads/236/100167/SaskatoonBerries-DukeElsner-WEB.jpg",
-        },
-    ];*/
-  //  const [fields, setFields] = useState<Field[]>(sampleFields); // No sample data
     const dispatch = useDispatch();
-    const fields = useSelector((state: RootState) => state.field); // Replace with your actual field state=
+    const fields = useSelector((state: RootState) => state.field);
 
     const [newField, setNewField] = useState<Field>({
         fieldCode: "",
@@ -63,6 +34,7 @@ export default function FieldManagement() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedField, setSelectedField] = useState<Field | null>(null);
+    const [editingField, setEditingField] = useState<Field | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -99,6 +71,29 @@ export default function FieldManagement() {
         }
     };
 
+    const handleUpdateField = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (editingField) {
+            dispatch(updateField(newField)); // Dispatch update action
+            setEditingField(null); // Reset editing state
+            setNewField({
+                fieldCode: "",
+                fieldName: "",
+                fieldLocation: "",
+                size: "",
+                crops: "",
+                staff: "",
+                image: "",
+            });
+        }
+    };
+
+    const handleRowClick = (field: Field) => {
+        setNewField(field);
+        setEditingField(field); // Store the field being edited
+    };
+
     const handleSeeMore = (field: Field) => {
         setSelectedField(field);
         setIsModalOpen(true);
@@ -116,6 +111,28 @@ export default function FieldManagement() {
     // Sample options for SelectField components
     const cropOptions = ["Wheat", "Rice", "Corn"];
     const staffOptions = ["John Doe", "Jane Smith", "Alice Johnson"];
+
+    // Table Columns
+    const columns = [
+        { header: "Field Code", accessor: "fieldCode" },
+        { header: "Field Name", accessor: "fieldName" },
+        { header: "Crops", accessor: "crops" },
+        { header: "Staff", accessor: "staff" },
+    ];
+
+    // Table Actions
+    const actions = [
+        {
+            label: "See More",
+            onClick: (row: Field) => handleSeeMore(row),
+            className: "bg-blue-600 text-white py-1 px-3 rounded-md",
+        },
+        {
+            label: "Delete",
+            onClick: (row: Field) => handleDeleteField(row.fieldCode),
+            className: "bg-red-600 text-white py-1 px-3 rounded-md",
+        },
+    ];
 
     return (
         <div className="max-w-5xl mx-auto p-6 bg-white rounded-md shadow-md">
@@ -183,48 +200,20 @@ export default function FieldManagement() {
                 </button>
                 <button
                     type="button"
-                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                    onClick={handleUpdateField}
                 >
                     Update Field
                 </button>
             </form>
 
             {/* Table Section */}
-            <table className="w-full table-auto border-collapse">
-                <thead>
-                <tr>
-                    <th className="border px-4 py-2">Field Code</th>
-                    <th className="border px-4 py-2">Field Name</th>
-                    <th className="border px-4 py-2">Crops</th>
-                    <th className="border px-4 py-2">Staff</th>
-                    <th className="border px-4 py-2">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {fields.map((field, index) => (
-                    <tr key={index}>
-                        <td className="border px-4 py-2">{field.fieldCode}</td>
-                        <td className="border px-4 py-2">{field.fieldName}</td>
-                        <td className="border px-4 py-2">{field.crops}</td>
-                        <td className="border px-4 py-2">{field.staff}</td>
-                        <td className="border px-4 py-2">
-                            <button
-                                onClick={() => handleSeeMore(field)}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md mr-2"
-                            >
-                                See More
-                            </button>
-                            <button
-                                onClick={() => handleDeleteField(field.fieldCode)}
-                                className="bg-red-600 text-white px-4 py-2 rounded-md"
-                            >
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <Table
+                columns={columns}
+                data={fields}
+                actions={actions}
+                onRowClick={handleRowClick} // Handle row clicks for editing
+            />
 
             {/* Modal */}
             {isModalOpen && selectedField && (

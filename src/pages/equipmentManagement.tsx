@@ -5,7 +5,7 @@ import Table from "../components/Table";
 import Modal from "../components/Modal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store/store.tsx";
-import {addEquipment, deleteEquipment} from "../redux/EquipmentSlice.ts";
+import {addEquipment, deleteEquipment, updateEquipment} from "../redux/EquipmentSlice.ts";
 
 interface Equipment {
     equipmentId: string;
@@ -35,6 +35,7 @@ export default function EquipmentManagement() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+    const [editingEquipment, setEditingEquipment] = useState<Equipment | null>(null);
 
 
     const handleAddEquipment = (event : React.FormEvent) => {
@@ -48,6 +49,27 @@ export default function EquipmentManagement() {
             assignedStaff: "",
         });
         clearForm();
+    };
+
+    const handleUpdateEquipment = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (editingEquipment) {
+            dispatch(updateEquipment(newEquipment)); // Dispatch update action
+            setEditingEquipment(null); // Reset editing state
+            setNewEquipment({
+                equipmentId: "",
+                name: "",
+                type: "",
+                status: "",
+                assignedStaff: "",
+            });
+        }
+    }
+
+    const handleRowClick = (equipment: Equipment) => {
+        setEditingEquipment(equipment);
+        setNewEquipment(equipment);
     };
 
     const handleDelete = (equipmentId: string) => {
@@ -109,7 +131,7 @@ export default function EquipmentManagement() {
         },
         {
             label: "Delete",
-            onClick: handleDelete,
+            onClick: (row: Equipment) => handleDelete(row.equipmentId),
             className: "bg-red-600 text-white hover:bg-red-700",
         },
     ];
@@ -162,25 +184,24 @@ export default function EquipmentManagement() {
                     />
                 </div>
 
-                <div className="flex justify-between mt-6">
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
-                    >
-                        Save
-                    </button>
-                    <button
-                        type="button"
-                        onClick={clearForm}
-                        className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
-                    >
-                        Clear
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md mr-4"
+                >
+                    Add Equipment
+                </button>
+                <button
+                    type="submit"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                    onClick={handleUpdateEquipment}
+
+                >
+                    Update Equipment
+                </button>
             </form>
 
             <div className="mt-8">
-                <Table columns={columns} data={equipments} actions={actions} />
+                <Table columns={columns} data={equipments} actions={actions} onRowClick={handleRowClick}/>
             </div>
 
             {selectedEquipment && (

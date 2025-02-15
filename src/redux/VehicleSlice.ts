@@ -14,7 +14,7 @@ const VehicleSlice=createSlice({
             return state.filter(vehicle => vehicle.vehicleCode !== action.payload);
         },
         updateVehicle: (state, action) => {
-            const index = state.findIndex(vehicle => vehicle.vehicleCode === action.payload.vehicleId);
+            const index = state.findIndex(vehicle => vehicle.vehicleCode === action.payload.vehicleCode);
             if (index !== -1) {
                 state[index] = action.payload;
             }
