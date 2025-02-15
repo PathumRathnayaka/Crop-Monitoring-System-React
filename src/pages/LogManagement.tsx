@@ -7,7 +7,7 @@ import Table from "../components/Table";
 import Modal from "../components/Modal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../store/store.tsx";
-import {addLog, deleteLog} from "../redux/LogSlice.ts";
+import {addLog, deleteLog, updateLog} from "../redux/LogSlice.ts";
 
 interface Log {
     logCode: string;
@@ -38,6 +38,7 @@ export default function LogManagement() {
     // const [logs, setLogs] = useState(sampleLogData); // Initialize with empty array
     const [selectedLog, setSelectedLog] = useState<Log | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingLog, setEditingLog] = useState<Log | null>(null);
 
     const handleAddLog = (event: React.FormEvent) => {
         event.preventDefault();
@@ -54,7 +55,27 @@ export default function LogManagement() {
         // clearForm();
     };
 
+    const handleUpdateLog = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (editingLog) {
+            dispatch(updateLog(newLog));
+            setEditingLog(null);
+            setNewLog({
+                logCode: "",
+                logDate: "",
+                field: "",
+                crop: "",
+                staff: "",
+                logDetails: "",
+                observedImage: "",
+            });
+        }
+    }
 
+    const handleRowClick = (log: Log) => {
+        setEditingLog(log);
+        setNewLog(log);
+    };
 
     const handleDelete = (logCode: string) => {
         dispatch(deleteLog(logCode));
@@ -95,16 +116,6 @@ export default function LogManagement() {
     };
 
 
-    /*const clearForm = () => {
-        setLogCode("");
-        setLogDate("");
-        setField("");
-        setCrop("");
-        setStaff("");
-        setLogDetails("");
-        setObservedImage("");
-    };*/
-
     const columns = [
         { header: "Log Code", accessor: "logCode" },
         { header: "Log Date", accessor: "logDate" },
@@ -121,7 +132,7 @@ export default function LogManagement() {
         },
         {
             label: "Delete",
-            onClick: handleDelete,
+            onClick: (log: Log) => handleDelete(log.logCode),
             className: "bg-red-600 text-white hover:bg-red-700",
         },
     ];
@@ -183,25 +194,23 @@ export default function LogManagement() {
                         onImageChange={handleImageUrlChange}
                     />
                 </div>
-                <div className="flex justify-between mt-6">
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
-                    >
-                        Save
-                    </button>
-                    <button
-                        type="button"
-                        /*onClick={clearForm}*/
-                        className="bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700"
-                    >
-                        Clear
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md mr-4"
+                >
+                    Add Log
+                </button>
+                <button
+                    type="submit"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md mr-4"
+                    onClick={handleUpdateLog}
+                >
+                    Update Log
+                </button>
             </form>
 
             <div className="mt-8">
-                <Table columns={columns} data={logs} actions={actions} />
+                <Table columns={columns} data={logs} actions={actions} onRowClick={handleRowClick}/>
             </div>
 
             {selectedLog && (
