@@ -1,6 +1,6 @@
 # Crop & Staff Management System 🌱👨‍💼
 
-A **React + Redux Toolkit** project for managing crops and staff efficiently. This system allows users to **add, update, and delete** crop and staff details with an intuitive UI built using **Tailwind CSS** and Bootstrap.
+A **React + Redux Toolkit** project for managing crops and staff efficiently. This system allows users to **add, update, and delete** crop and staff details with an intuitive UI built using **Tailwind CSS**.
 
 ## 🚀 Features
 - **Crop Management**: Add, update, and delete crop records, including crop code, name, category, season, and images.
@@ -9,7 +9,7 @@ A **React + Redux Toolkit** project for managing crops and staff efficiently. Th
 - **Reusable Components**: Modular design with reusable form fields, tables, and modals.
 
 ## 🛠 Tech Stack
-- **Frontend**: React, TypeScript, Redux Toolkit, Tailwind CSS, Bootstrap
+- **Frontend**: React, TypeScript, Redux Toolkit, Tailwind CSS
 - **State Management**: Redux Toolkit
 - **Styling**: Tailwind CSS
 
